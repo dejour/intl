@@ -1,0 +1,1 @@
+var hello = '{site.首页}'
