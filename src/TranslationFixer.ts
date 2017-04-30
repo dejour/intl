@@ -12,16 +12,24 @@ export class TranslationFixer {
     public add(document: vscode.TextDocument, range: vscode.Range,
         context: vscode.CodeActionContext, token: vscode.CancellationToken, text: string): void {
 
-        let edit: vscode.WorkspaceEdit = new vscode.WorkspaceEdit()
-        const writePath = vscode.workspace.rootPath+'/cn.ts';
-        const writeUri = vscode.Uri.file(writePath)
-        vscode.workspace.openTextDocument(writeUri).then((document)=> {
-            edit.insert(writeUri, new vscode.Position(document.lineCount-1, 0),
-                `\t${text}: '${text}'\n`);
-                vscode.workspace.applyEdit(edit);
+        let edit1: vscode.WorkspaceEdit = new vscode.WorkspaceEdit()
+        let edit2: vscode.WorkspaceEdit = new vscode.WorkspaceEdit()
+        const writeCnPath = vscode.workspace.rootPath + '/src/pages/language/locale/zh.ts';
+        const writeEnPath = vscode.workspace.rootPath + '/src/assets/lang/en.json';
+        const writeCnUri = vscode.Uri.file(writeCnPath)
+        const writeEnUri = vscode.Uri.file(writeEnPath)
+        vscode.workspace.openTextDocument(writeCnUri).then((document) => {
+            edit1.insert(writeCnUri, new vscode.Position(document.lineCount - 3, 0),
+                `\t"${text}": "${text}",\n`);
+            vscode.workspace.applyEdit(edit1);
             vscode.workspace.saveAll()
         })
-        console.log(writePath, document)
+        vscode.workspace.openTextDocument(writeEnUri).then((document) => {
+            edit2.insert(writeEnUri, new vscode.Position(document.lineCount - 2, 0),
+                `\t\t"${text}",\n`);
+            vscode.workspace.applyEdit(edit2);
+            vscode.workspace.saveAll()
+        })
     }
 
 }
